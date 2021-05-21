@@ -19,10 +19,12 @@ package com.ververica.flink.benchmark;
 
 import org.apache.flink.api.java.tuple.Tuple2;
 import org.apache.flink.api.java.tuple.Tuple3;
+import org.apache.flink.streaming.api.datastream.DataStream;
 import org.apache.flink.table.api.Table;
 import org.apache.flink.table.api.TableEnvironment;
-import org.apache.flink.table.api.TableUtils;
+import org.apache.flink.table.api.bridge.java.StreamTableEnvironment;
 import org.apache.flink.types.Row;
+import org.apache.flink.util.CloseableIterator;
 import org.apache.flink.util.Preconditions;
 
 import org.slf4j.Logger;
@@ -68,15 +70,19 @@ class Runner {
 
 		LOG.info("begin register tables.");
 
+		Table table = tEnv.sqlQuery(sqlQuery);
+		final DataStream<Tuple2<Boolean, Row>> ds = ((StreamTableEnvironment) tEnv).toRetractStream(table, Row.class);
+
 		long startTime = System.currentTimeMillis();
 		LOG.info(" begin optimize.");
 
-		Table table = tEnv.sqlQuery(sqlQuery);
-
 		LOG.info(" begin execute.");
-
-		List<Row> res = TableUtils.collectToList(table);
-
+		List<Row> res = new ArrayList<>();
+		try (final CloseableIterator<Tuple2<Boolean, Row>> iterator = ds.executeAndCollect()) {
+			while (iterator.hasNext()) {
+				res.add(iterator.next().f1);
+			}
+		}
 		LOG.info(" end execute");
 
 		System.out.println();

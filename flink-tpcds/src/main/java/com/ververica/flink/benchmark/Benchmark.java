@@ -19,8 +19,10 @@ package com.ververica.flink.benchmark;
 
 import org.apache.flink.api.java.tuple.Tuple2;
 import org.apache.flink.configuration.GlobalConfiguration;
+import org.apache.flink.streaming.api.environment.StreamExecutionEnvironment;
 import org.apache.flink.table.api.EnvironmentSettings;
 import org.apache.flink.table.api.TableEnvironment;
+import org.apache.flink.table.api.bridge.java.StreamTableEnvironment;
 import org.apache.flink.table.api.config.ExecutionConfigOptions;
 import org.apache.flink.table.api.config.OptimizerConfigOptions;
 import org.apache.flink.table.catalog.hive.HiveCatalog;
@@ -132,8 +134,9 @@ public class Benchmark {
 	}
 
 	private static TableEnvironment setUpEnv(String hiveConf, String database, int parallelism) {
-		EnvironmentSettings settings = EnvironmentSettings.newInstance().useBlinkPlanner().inBatchMode().build();
-		TableEnvironment tEnv = TableEnvironment.create(settings);
+		final StreamExecutionEnvironment env = StreamExecutionEnvironment.getExecutionEnvironment();
+		final EnvironmentSettings envSettings = EnvironmentSettings.newInstance().useBlinkPlanner().build();
+		final StreamTableEnvironment tEnv = StreamTableEnvironment.create(env, envSettings);
 
 		tEnv.getConfig().getConfiguration().setBoolean(
 				OptimizerConfigOptions.TABLE_OPTIMIZER_JOIN_REORDER_ENABLED, true);

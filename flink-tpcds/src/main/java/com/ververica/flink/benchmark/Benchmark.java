@@ -133,7 +133,7 @@ public class Benchmark {
 	}
 
 	private static TableEnvironment setUpEnv(String hiveConf, String database, int parallelism) {
-		EnvironmentSettings settings = EnvironmentSettings.newInstance().useBlinkPlanner().inBatchMode().build();
+		EnvironmentSettings settings = EnvironmentSettings.newInstance().useBlinkPlanner().build();
 		TableEnvironment tEnv = TableEnvironment.create(settings);
 
 		tEnv.getConfig().getConfiguration().setBoolean(

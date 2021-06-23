@@ -78,7 +78,7 @@ class Runner {
 		final List<Row> res = new ArrayList<>();
 		try (final CloseableIterator<Row> iterator = table.execute().collect()) {
 			while (iterator.hasNext()) {
-				res.add(iterator.next());
+				iterator.next();
 			}
 		}
 

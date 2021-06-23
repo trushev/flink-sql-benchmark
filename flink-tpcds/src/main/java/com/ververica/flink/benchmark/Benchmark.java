@@ -38,6 +38,7 @@ import java.util.List;
 
 import static java.util.Objects.requireNonNull;
 import static com.ververica.flink.benchmark.QueryUtil.getQueries;
+import static org.apache.flink.connectors.hive.HiveOptions.TABLE_EXEC_HIVE_INFER_SOURCE_PARALLELISM;
 
 public class Benchmark {
 
@@ -145,6 +146,7 @@ public class Benchmark {
 				ExecutionConfigOptions.TABLE_EXEC_RESOURCE_DEFAULT_PARALLELISM, parallelism);
 		tEnv.getConfig().getConfiguration().setInteger(
 				ExecutionConfigOptions.TABLE_EXEC_SORT_DEFAULT_LIMIT, 200);
+		tEnv.getConfig().getConfiguration().set(TABLE_EXEC_HIVE_INFER_SOURCE_PARALLELISM, false);
 
 		tEnv.getConfig().addConfiguration(GlobalConfiguration.loadConfiguration());
 
